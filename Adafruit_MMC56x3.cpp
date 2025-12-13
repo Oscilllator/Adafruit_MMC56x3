@@ -227,10 +227,11 @@ bool Adafruit_MMC5603::getEvent(sensors_event_t *event) {
   return true;
 }
 
-bool Adafruit_MMC5603::getEventNoOffset(sensors_event_t *event) {
+bool Adafruit_MMC5603::getEventNoOffset(sensors_event_t *event)
+{
   // 1) SET
   _ctrl0_reg->write(0b1000);
-delay(10); // REQUIRED: t_SR = 1ms per datasheet
+  delay(1); // REQUIRED: t_SR = 1ms per datasheet
 
   // 2) measure
   sensors_event_t event1;
@@ -238,14 +239,13 @@ delay(10); // REQUIRED: t_SR = 1ms per datasheet
 
   // 3) RESET
   _ctrl0_reg->write(0b1'0000);
-delay(10); // REQUIRED: t_SR = 1ms per datasheet  
+  delay(1); // REQUIRED: t_SR = 1ms per datasheet
 
   // 4) measure
   sensors_event_t event2;
   if (!getEvent(&event2)) return false;
 
-  // 5) result is (r1 - r2) / 2
-
+  // 5) result is (e1 - e2) / 2
   *event = event1;
   event->magnetic.x = (event1.magnetic.x - event2.magnetic.x) / 2.0;
   event->magnetic.y = (event1.magnetic.y - event2.magnetic.y) / 2.0;
