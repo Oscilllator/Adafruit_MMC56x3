@@ -188,6 +188,7 @@ bool Adafruit_MMC5603::getEvent(sensors_event_t *event) {
   /* Clear the event */
   memset(event, 0, sizeof(sensors_event_t));
 
+
   /* Read new data */
   if (!isContinuousMode()) {
     _ctrl0_reg->write(0x01); // TM_M trigger
@@ -222,6 +223,33 @@ bool Adafruit_MMC5603::getEvent(sensors_event_t *event) {
   event->magnetic.x = (float)x * 0.00625; // scale to uT by LSB in datasheet
   event->magnetic.y = (float)y * 0.00625;
   event->magnetic.z = (float)z * 0.00625;
+
+  return true;
+}
+
+bool Adafruit_MMC5603::getEventNoOffset(sensors_event_t *event) {
+  // 1) SET
+  _ctrl0_reg->write(0b1000);
+delay(10); // REQUIRED: t_SR = 1ms per datasheet
+
+  // 2) measure
+  sensors_event_t event1;
+  if (!getEvent(&event1)) return false;
+
+  // 3) RESET
+  _ctrl0_reg->write(0b1'0000);
+delay(10); // REQUIRED: t_SR = 1ms per datasheet  
+
+  // 4) measure
+  sensors_event_t event2;
+  if (!getEvent(&event2)) return false;
+
+  // 5) result is (r1 - r2) / 2
+
+  *event = event1;
+  event->magnetic.x = (event1.magnetic.x - event2.magnetic.x) / 2.0;
+  event->magnetic.y = (event1.magnetic.y - event2.magnetic.y) / 2.0;
+  event->magnetic.z = (event1.magnetic.z - event2.magnetic.z) / 2.0;
 
   return true;
 }
