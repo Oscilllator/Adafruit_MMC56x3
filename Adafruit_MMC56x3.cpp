@@ -188,7 +188,6 @@ bool Adafruit_MMC5603::getEvent(sensors_event_t *event) {
   /* Clear the event */
   memset(event, 0, sizeof(sensors_event_t));
 
-
   /* Read new data */
   if (!isContinuousMode()) {
     _ctrl0_reg->write(0x01); // TM_M trigger

@@ -61,6 +61,9 @@ public:
   bool begin(uint8_t i2c_addr = MMC56X3_DEFAULT_ADDRESS, TwoWire *wire = &Wire);
 
   bool getEvent(sensors_event_t *);
+  // Like getEvent, but measures and removes the internal offset first.
+  // See: USING SET AND RESET TO REMOVE BRIDGE OFFSET
+  // In the datasheet.
   bool getEventNoOffset(sensors_event_t *event);
   void getSensor(sensor_t *);
 
