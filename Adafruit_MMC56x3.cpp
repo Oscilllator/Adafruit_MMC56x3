@@ -237,7 +237,7 @@ bool Adafruit_MMC5603::getEventNoOffset(sensors_event_t *event)
   if (!getEvent(&event1)) return false;
 
   // 3) RESET
-  _ctrl0_reg->write(0b1'0000);
+  _ctrl0_reg->write(0b10000);
   delay(1); // REQUIRED: t_SR = 1ms per datasheet
 
   // 4) measure
